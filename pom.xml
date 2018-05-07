@@ -23,6 +23,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <spring-cloud.version>Finchley.RC1</spring-cloud.version>
+        <spring-mybatis.version>1.3.2</spring-mybatis.version>
+        <spring-tk.mybatis.version>2.0.2</spring-tk.mybatis.version>
+        <spring-pagehelper.version>1.2.5</spring-pagehelper.version>
     </properties>
 
     <dependencies>

@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/1/11.
- * Description :
  */
 @Configuration
 public class RestTemplateConfiguration {

@@ -1,5 +1,9 @@
 package com.anur.messageserver.common;
 
+/**
+ * Created by Anur IjuoKaruKas on 2018/5/7
+ * 常量
+ */
 public class Constant {
     public static final String BASE_PACKAGE = "com.anur.messageserver";
 

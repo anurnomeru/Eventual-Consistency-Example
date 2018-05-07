@@ -1,6 +1,7 @@
 package com.anur.messageserver.common;
 
 /**
+ * Created by Anur IjuoKaruKas on 2018/5/7
  * 响应码枚举，参考HTTP状态码的语义
  */
 public enum ResultCode {

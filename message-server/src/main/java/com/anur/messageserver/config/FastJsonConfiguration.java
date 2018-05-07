@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/1/11.
- * Description : 把spring-boot默认的json解析器由Jenkins换为fastjson
+ * 把spring-boot默认的json解析器由Jenkins换为fastjson
  */
 @Configuration
 public class FastJsonConfiguration extends FastJsonHttpMessageConverter4 {
@@ -35,6 +35,7 @@ public class FastJsonConfiguration extends FastJsonHttpMessageConverter4 {
 
         FastJsonHttpMessageConverter4 fastjson = new FastJsonHttpMessageConverter4();
         fastjson.setFastJsonConfig(fastJsonConfig);
+
         return new HttpMessageConverters(fastjson);
     }
 }

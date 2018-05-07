@@ -22,7 +22,6 @@ import static com.anur.messageserver.common.Constant.MODEL_PACKAGE;
 
 /**
  * Created by Anur IjuoKaruKas on 2017/12/13.
- * Description :
  */
 @Configuration
 public class MybatisConfiguration {

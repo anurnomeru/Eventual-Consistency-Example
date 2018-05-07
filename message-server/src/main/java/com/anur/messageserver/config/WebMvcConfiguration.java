@@ -23,11 +23,9 @@ import javax.validation.ValidationException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Created by Anur IjuoKaruKas on 2017/12/13.
- * Description :
  */
 @Log4j
 @Configuration
@@ -38,9 +36,10 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         FastJsonHttpMessageConverter4 converter = new FastJsonHttpMessageConverter4();
         FastJsonConfig config = new FastJsonConfig();
-        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,//保留空的字段
-                SerializerFeature.WriteNullStringAsEmpty,//String null -> ""
-                SerializerFeature.WriteNullNumberAsZero);//Number null -> 0
+        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,// 保留空的字段
+                SerializerFeature.WriteNullStringAsEmpty,// String null -> ""
+                SerializerFeature.WriteNullNumberAsZero);// Number null -> 0
+
         config.setDateFormat("yyyy-MM-dd HH:mm:ss");
         converter.setFastJsonConfig(config);
         converter.setDefaultCharset(Charset.forName("UTF-8"));
@@ -51,19 +50,22 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         exceptionResolvers.add((httpServletRequest, httpServletResponse, o, e) -> {
-            Result result = new Result();
+            Result.ResultBuilder resultBuilder = Result.builder();
             if (e instanceof ServiceException) {// 业务失败的异常，如“账号或密码错误”
-                result.setCode(ResultCode.FAIL).setMessage(e.getMessage());
+                resultBuilder.code(ResultCode.FAIL.code).message(e.getMessage());
                 log.info(e.getMessage());
                 e.printStackTrace();
+
             } else if (e instanceof ValidationException) {// 数据验证异常
-                result.setCode(ResultCode.FAIL);
+                resultBuilder.code(ResultCode.FAIL.code);
+
             } else if (e instanceof NoHandlerFoundException) {
-                result.setCode(ResultCode.NOT_FOUND).setMessage("API [" + httpServletRequest.getRequestURI() + "] NOT FOUND");
+                resultBuilder.code(ResultCode.NOT_FOUND.code).message("API [" + httpServletRequest.getRequestURI() + "] NOT FOUND");
+
             } else if (e instanceof ServletException) {
-                result.setCode(ResultCode.FAIL).setMessage(e.getMessage());
+                resultBuilder.code(ResultCode.FAIL.code).message(e.getMessage());
             } else {
-                result.setCode(ResultCode.INTERNAL_SERVER_ERROR).setMessage("API [" + httpServletRequest.getRequestURI() + "] ERROR: " + e.getMessage());
+                resultBuilder.code(ResultCode.INTERNAL_SERVER_ERROR.code).message("API [" + httpServletRequest.getRequestURI() + "] ERROR: " + e.getMessage());
                 String message;
                 if (o instanceof HandlerMethod) {
                     HandlerMethod handlerMethod = (HandlerMethod) o;
@@ -72,12 +74,13 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                             handlerMethod.getBean().getClass().getName(),
                             handlerMethod.getMethod().getName(),
                             e.getMessage());
+
                 } else {
                     message = e.getMessage();
                 }
                 log.error(message, e);
             }
-            responseResult(httpServletResponse, result);
+            responseResult(httpServletResponse, resultBuilder.build());
             return new ModelAndView();
         });
     }

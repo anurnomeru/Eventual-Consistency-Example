@@ -1,4 +1,4 @@
-package com.anur.messageserver.common;
+package com.anur.common;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/5/7

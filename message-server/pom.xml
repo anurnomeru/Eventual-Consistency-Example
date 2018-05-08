@@ -17,6 +17,12 @@
     </parent>
 
     <dependencies>
+        <dependency>
+            <groupId>com.anur</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- 消息中间件 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -27,6 +33,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- aop组件 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
         <!--&lt;!&ndash; feign &ndash;&gt;-->

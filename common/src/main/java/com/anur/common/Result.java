@@ -1,4 +1,4 @@
-package com.anur.messageserver.common;
+package com.anur.common;
 
 
 import lombok.Builder;

@@ -13,7 +13,6 @@
     <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
     <result column="dead" jdbcType="VARCHAR" property="dead" />
     <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="msg_id" jdbcType="INTEGER" property="msgId" />
     <result column="msg_content" jdbcType="VARCHAR" property="msgContent" />
     <result column="msg_data_type" jdbcType="VARCHAR" property="msgDataType" />
     <result column="msg_send_queue" jdbcType="VARCHAR" property="msgSendQueue" />

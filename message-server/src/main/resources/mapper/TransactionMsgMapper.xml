@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.anur.messageserver.dao.TransactionMsgMapper">
-  <resultMap id="BaseResultMap" type="com.anur.messageserver.model.TransactionMsg">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="version" jdbcType="INTEGER" property="version" />
-    <result column="creater" jdbcType="VARCHAR" property="creater" />
-    <result column="editor" jdbcType="VARCHAR" property="editor" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
-    <result column="dead" jdbcType="VARCHAR" property="dead" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="msg_content" jdbcType="VARCHAR" property="msgContent" />
-    <result column="msg_data_type" jdbcType="VARCHAR" property="msgDataType" />
-    <result column="msg_send_queue" jdbcType="VARCHAR" property="msgSendQueue" />
-    <result column="msg_send_time" jdbcType="TIMESTAMP" property="msgSendTime" />
-    <result column="field1" jdbcType="VARCHAR" property="field1" />
-    <result column="field2" jdbcType="VARCHAR" property="field2" />
-    <result column="field3" jdbcType="VARCHAR" property="field3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.anur.messageserver.model.TransactionMsg">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="creater" jdbcType="VARCHAR" property="creater"/>
+        <result column="editor" jdbcType="VARCHAR" property="editor"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+        <result column="dead" jdbcType="VARCHAR" property="dead"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="msg_content" jdbcType="VARCHAR" property="msgContent"/>
+        <result column="msg_data_type" jdbcType="VARCHAR" property="msgDataType"/>
+        <result column="msg_send_queue" jdbcType="VARCHAR" property="msgSendQueue"/>
+        <result column="msg_send_time" jdbcType="TIMESTAMP" property="msgSendTime"/>
+        <result column="field1" jdbcType="VARCHAR" property="field1"/>
+        <result column="field2" jdbcType="VARCHAR" property="field2"/>
+        <result column="field3" jdbcType="VARCHAR" property="field3"/>
+    </resultMap>
 </mapper>

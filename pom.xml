@@ -6,7 +6,7 @@
     <groupId>com.anur</groupId>
     <artifactId>anurmq</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>anurmq</name>
     <description>Anur MQ</description>
@@ -30,6 +30,15 @@
         <log4j.version>1.2.17</log4j.version>
     </properties>
 
+    <modules>
+        <module>codegen</module>
+        <module>common</module>
+        <module>eureka</module>
+        <module>message-server</module>
+        <module>message-api</module>
+        <module>provider</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,6 +50,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

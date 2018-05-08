@@ -1,11 +1,17 @@
 package com.anur.messageserver.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "transaction_msg")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class TransactionMsg {
     @Id
@@ -40,9 +46,6 @@ public class TransactionMsg {
     @Column(name = "msg_send_time")
     private Date msgSendTime;
 
-    private String field1;
-
-    private String field2;
-
-    private String field3;
+    @Column(name = "param_map")
+    private String paramMap;
 }

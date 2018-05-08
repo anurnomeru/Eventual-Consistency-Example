@@ -54,7 +54,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         transactionMsg.setStatus(MsgStatusEnum.CONFIRM.name());
         transactionMsg.setVersion(originalVersion + 1);
 
-        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion));
+        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion, id));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         transactionMsg.setMsgSendTime(new Date());
         transactionMsg.setVersion(originalVersion + 1);
 
-        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion));
+        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion, id));
     }
 
     @Override
@@ -81,15 +81,15 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         transactionMsg.setStatus(MsgStatusEnum.ACK.name());
         transactionMsg.setVersion(originalVersion + 1);
 
-        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion));
+        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion, id));
     }
 
     /**
      * version 参数防止并发下的重复修改，确保数据修改正确
      */
-    private Condition _genVersionCondition(int version) {
+    private Condition _genVersionCondition(int version, String id) {
         Condition condition = new Condition(TransactionMsg.class);
-        condition.or().andEqualTo("version", version);
+        condition.or().andEqualTo("version", version).andEqualTo("id", id);
         return condition;
     }
 }

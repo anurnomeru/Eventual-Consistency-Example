@@ -7,7 +7,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.anur.common.Result;
 import com.anur.common.ResultCode;
 import com.anur.messageserver.exception.ServiceException;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.HandlerMethod;
@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by Anur IjuoKaruKas on 2017/12/13.
  */
-@Log4j
+@Slf4j
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 

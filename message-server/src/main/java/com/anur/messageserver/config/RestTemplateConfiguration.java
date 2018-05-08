@@ -39,7 +39,7 @@ public class RestTemplateConfiguration {
         messageConverters.removeIf(converter -> converter instanceof StringHttpMessageConverter);
 
         messageConverters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
-        messageConverters.add(new FastJsonConfiguration());
+//        messageConverters.add(new FastJsonConfiguration());
 
         return restTemplate;
     }

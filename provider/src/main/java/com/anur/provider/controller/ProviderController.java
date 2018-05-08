@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Random;
+
 /**
  * Created by Anur IjuoKaruKas on 2018/5/8
  */
@@ -21,8 +23,11 @@ public class ProviderController {
 
     @GetMapping
     public String test() {
-        return transactionMsgService.prepareMsg("test", "key", "exchange", "param", artistConfiguration.getArtist());
-
+        String msgId = transactionMsgService.prepareMsg("test", "key", "exchange", "param", artistConfiguration.getArtist());
+        if (Math.random() < 0.5) {
+            throw new NullPointerException();
+        }
+        return transactionMsgService.confirmMsgToSend(msgId) + "";
     }
 
 }

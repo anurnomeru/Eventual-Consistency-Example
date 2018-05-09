@@ -3,11 +3,14 @@ package com.anur.messageserver.service;
 import com.anur.field.DeadStatusEnum;
 import com.anur.field.MsgStatusEnum;
 import com.anur.messageapi.api.TransactionMsgApi;
-import com.anur.messageapi.config.ArtistConfiguration;
+import com.anur.messageserver.MessageServerApplication;
 import com.anur.messageserver.dao.TransactionMsgMapper;
 import com.anur.messageserver.model.TransactionMsg;
 import com.anur.messageserver.core.AbstractService;
+import org.bouncycastle.cms.PasswordRecipientId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
@@ -27,7 +30,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     private TransactionMsgMapper transactionMsgMapper;
 
     @Autowired
-    private ArtistConfiguration artistConfiguration;
+    private MessageServerApplication messageServerApplication;
 
     @Override
     public String prepareMsg(Object msg, String routingKey, String exchange, String paramMap, String artist) {
@@ -40,27 +43,37 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
                 .dead(DeadStatusEnum.ALIVE.name())
                 .status(MsgStatusEnum.PREPARE.name())
                 .version(0);
+
         transactionMsgMapper.insert(builder.build());
+
         return id;
     }
 
     @Override
     public int confirmMsgToSend(String id) {
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
-        transactionMsg.setEditor(artistConfiguration.getArtist());
+        transactionMsg.setEditor(messageServerApplication.getArtist());
         transactionMsg.setEditTime(new Date());
 
         int originalVersion = transactionMsg.getVersion();
         transactionMsg.setStatus(MsgStatusEnum.CONFIRM.name());
         transactionMsg.setVersion(originalVersion + 1);
 
-        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion, id));
+        int result = transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion, id));
+        return result;
     }
 
+    @Async
     @Override
-    public int sendMsg(String id) {
+    public void sendMsg(String id) {
+        try {
+            System.out.println("sleep");
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
-        transactionMsg.setEditor(artistConfiguration.getArtist());
+        transactionMsg.setEditor(messageServerApplication.getArtist());
         transactionMsg.setEditTime(new Date());
 
         int originalVersion = transactionMsg.getVersion();
@@ -68,7 +81,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         transactionMsg.setMsgSendTime(new Date());
         transactionMsg.setVersion(originalVersion + 1);
 
-        return transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion, id));
+        transactionMsgMapper.updateByCondition(transactionMsg, this._genVersionCondition(originalVersion, id));
     }
 
     @Override

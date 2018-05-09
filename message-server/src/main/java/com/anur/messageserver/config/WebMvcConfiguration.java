@@ -1,35 +1,32 @@
 package com.anur.messageserver.config;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.anur.common.Result;
 import com.anur.common.ResultCode;
 import com.anur.messageserver.exception.ServiceException;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by Anur IjuoKaruKas on 2017/12/13.
  */
-@Slf4j
+@Log
 @Configuration
-public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
+public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     // 使用阿里 FastJson 作为JSON MessageConverter
     @Override
@@ -78,28 +75,28 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                 } else {
                     message = e.getMessage();
                 }
-                log.error(message, e);
+                log.log(Level.WARNING, message, e);
             }
-            responseResult(httpServletResponse, resultBuilder.build());
+//            responseResult(httpServletResponse, resultBuilder.build());
             return new ModelAndView();
         });
     }
 
-    private void responseResult(HttpServletResponse response, Result result) {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
-        response.setStatus(200);
-        try {
-            response.getWriter().write(JSON.toJSONString(result));
-        } catch (IOException ex) {
-            log.error(ex.getMessage());
-        }
-    }
+//    private void responseResult(HttpServletResponse response, Result result) {
+//        response.setCharacterEncoding("UTF-8");
+//        response.setHeader("Content-type", "application/json;charset=UTF-8");
+//        response.setStatus(200);
+//        try {
+//            response.getWriter().write(JSON.toJSONString(result));
+//        } catch (IOException ex) {
+//            log.error(ex.getMessage());
+//        }
+//    }
 
-    // 解决跨域问题
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        //registry.addMapping("/**");
-    }
+//    // 解决跨域问题
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        //registry.addMapping("/**");
+//    }
 
 }

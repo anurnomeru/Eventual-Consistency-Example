@@ -24,9 +24,6 @@ public class ProviderController {
     @GetMapping
     public String test() {
         String msgId = transactionMsgService.prepareMsg("test", "key", "exchange", "param", artistConfiguration.getArtist());
-        if (Math.random() < 0.5) {
-            throw new NullPointerException();
-        }
         return transactionMsgService.confirmMsgToSend(msgId) + "";
     }
 

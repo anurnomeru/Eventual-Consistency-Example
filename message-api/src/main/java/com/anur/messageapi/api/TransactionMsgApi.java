@@ -30,7 +30,7 @@ public interface TransactionMsgApi {
      * 向队列投递消息
      */
     @RequestMapping(value = "send", method = RequestMethod.GET)
-    int sendMsg(@RequestParam("id") String id);
+    void sendMsg(@RequestParam("id") String id);
 
     /**
      * 消费者确认消费成功

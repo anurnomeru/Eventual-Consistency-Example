@@ -1,14 +1,10 @@
 package com.anur.messageserver.config;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.anur.common.Result;
 import com.anur.common.ResultCode;
-import com.anur.messageserver.exception.ServiceException;
+import com.anur.exception.ServiceException;
 import lombok.extern.java.Log;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 import javax.servlet.ServletException;
 import javax.validation.ValidationException;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -28,20 +23,20 @@ import java.util.logging.Level;
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
-    // 使用阿里 FastJson 作为JSON MessageConverter
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        FastJsonHttpMessageConverter4 converter = new FastJsonHttpMessageConverter4();
-        FastJsonConfig config = new FastJsonConfig();
-        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,// 保留空的字段
-                SerializerFeature.WriteNullStringAsEmpty,// String null -> ""
-                SerializerFeature.WriteNullNumberAsZero);// Number null -> 0
-
-        config.setDateFormat("yyyy-MM-dd HH:mm:ss");
-        converter.setFastJsonConfig(config);
-        converter.setDefaultCharset(Charset.forName("UTF-8"));
-        converters.add(converter);
-    }
+//    // 使用阿里 FastJson 作为JSON MessageConverter
+//    @Override
+//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        FastJsonHttpMessageConverter4 converter = new FastJsonHttpMessageConverter4();
+//        FastJsonConfig config = new FastJsonConfig();
+//        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,// 保留空的字段
+//                SerializerFeature.WriteNullStringAsEmpty,// String null -> ""
+//                SerializerFeature.WriteNullNumberAsZero);// Number null -> 0
+//
+//        config.setDateFormat("yyyy-MM-dd HH:mm:ss");
+//        converter.setFastJsonConfig(config);
+//        converter.setDefaultCharset(Charset.forName("UTF-8"));
+//        converters.add(converter);
+//    }
 
     // 统一异常处理
     @Override

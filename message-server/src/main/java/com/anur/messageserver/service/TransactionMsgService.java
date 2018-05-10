@@ -1,15 +1,14 @@
 package com.anur.messageserver.service;
 
+import com.anur.config.ArtistConfiguration;
 import com.anur.field.DeadStatusEnum;
 import com.anur.field.MsgStatusEnum;
 import com.anur.messageapi.api.TransactionMsgApi;
-import com.anur.messageserver.MessageServerApplication;
 import com.anur.messageserver.dao.TransactionMsgMapper;
+import com.anur.exception.ServiceException;
 import com.anur.messageserver.model.TransactionMsg;
 import com.anur.messageserver.core.AbstractService;
-import org.bouncycastle.cms.PasswordRecipientId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     private TransactionMsgMapper transactionMsgMapper;
 
     @Autowired
-    private MessageServerApplication messageServerApplication;
+    private ArtistConfiguration artistConfiguration;
 
     @Override
     public String prepareMsg(Object msg, String routingKey, String exchange, String paramMap, String artist) {
@@ -52,7 +51,12 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     @Override
     public int confirmMsgToSend(String id) {
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
-        transactionMsg.setEditor(messageServerApplication.getArtist());
+
+        if (transactionMsg == null) {
+            throw new ServiceException("id is invalid.");
+        }
+
+        transactionMsg.setEditor(artistConfiguration.getArtist());
         transactionMsg.setEditTime(new Date());
 
         int originalVersion = transactionMsg.getVersion();
@@ -73,7 +77,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
             e.printStackTrace();
         }
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
-        transactionMsg.setEditor(messageServerApplication.getArtist());
+        transactionMsg.setEditor(artistConfiguration.getArtist());
         transactionMsg.setEditTime(new Date());
 
         int originalVersion = transactionMsg.getVersion();

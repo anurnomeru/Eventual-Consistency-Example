@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
+
 /**
  * Created by Anur IjuoKaruKas on 2018/5/8
  */
@@ -17,7 +19,7 @@ public interface TransactionMsgApi {
     String prepareMsg(@RequestParam("msg") Object msg,
                       @RequestParam("routingKey") String routingKey,
                       @RequestParam("exchange") String exchange,
-                      @RequestParam("paramMap") String paramMap,
+                      @RequestParam("paramMap") HashMap paramMap,
                       @RequestParam("artist") String artist);
 
     /**

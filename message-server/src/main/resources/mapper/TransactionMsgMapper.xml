@@ -14,8 +14,8 @@
         <result column="dead" jdbcType="VARCHAR" property="dead"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="msg_content" jdbcType="VARCHAR" property="msgContent"/>
-        <result column="msg_data_type" jdbcType="VARCHAR" property="msgDataType"/>
-        <result column="msg_send_queue" jdbcType="VARCHAR" property="msgSendQueue"/>
+        <result column="msg_exchange" jdbcType="VARCHAR" property="msgExchange"/>
+        <result column="msg_routing_key" jdbcType="VARCHAR" property="msgRoutingKey"/>
         <result column="msg_send_time" jdbcType="TIMESTAMP" property="msgSendTime"/>
         <result column="param_map" jdbcType="VARCHAR" property="paramMap"/>
     </resultMap>

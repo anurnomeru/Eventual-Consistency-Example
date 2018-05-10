@@ -1,6 +1,5 @@
 package com.anur.messageserver.config;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInterceptor;
 import com.github.pagehelper.autoconfigure.PageHelperProperties;
 import org.apache.ibatis.plugin.Interceptor;

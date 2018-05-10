@@ -1,12 +1,15 @@
 package com.anur.messageserver.controller;
 
+import com.anur.exception.ServiceException;
 import com.anur.messageapi.api.TransactionMsgApi;
 import com.anur.messageserver.service.TransactionMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/5/8
@@ -18,7 +21,7 @@ public class TransactionMsgController implements TransactionMsgApi {
     private TransactionMsgService transactionMsgService;
 
     @Override
-    public String prepareMsg(@NotNull Object msg, @NotNull String routingKey, @NotNull String exchange, @NotNull String paramMap, @NotNull String artist) {
+    public String prepareMsg(@NotNull Object msg, @NotNull String routingKey, @NotNull String exchange, @NotNull HashMap paramMap, @NotNull String artist) {
         return transactionMsgService.prepareMsg(msg, routingKey, exchange, paramMap, artist);
     }
 

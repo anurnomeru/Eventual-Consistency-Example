@@ -37,11 +37,11 @@ public class TransactionMsg {
     @Column(name = "msg_content")
     private String msgContent;
 
-    @Column(name = "msg_data_type")
-    private String msgDataType;
+    @Column(name = "msg_exchange")
+    private String msgExchange;
 
-    @Column(name = "msg_send_queue")
-    private String msgSendQueue;
+    @Column(name = "msg_routing_key")
+    private String msgRoutingKey;
 
     @Column(name = "msg_send_time")
     private Date msgSendTime;

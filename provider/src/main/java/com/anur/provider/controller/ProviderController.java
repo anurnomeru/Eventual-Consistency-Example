@@ -1,16 +1,15 @@
 package com.anur.provider.controller;
 
 import com.anur.config.ArtistConfiguration;
-import com.anur.provider.Tester;
+import com.anur.model.TestMsg;
 import com.anur.provider.service.TransactionMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/5/8
@@ -25,19 +24,19 @@ public class ProviderController {
     @Autowired
     private ArtistConfiguration artistConfiguration;
 
+    @GetMapping
     private void request() {
-        String msgId = transactionMsgService.prepareMsg("test", "key", "exchange", "param", artistConfiguration.getArtist());
+        TestMsg testMsg = new TestMsg();
+        testMsg.setContent("这是一条测试消息");
+        testMsg.setDate(new Date());
+
+        String routingKey = "testKey";
+        String exchangeName = "testExchange";
+        HashMap hashMap = new HashMap();
+        hashMap.put("orderId", "10086");
+        hashMap.put("state", "CLEAR");
+
+        String msgId = transactionMsgService.prepareMsg(testMsg, routingKey, exchangeName, hashMap, artistConfiguration.getArtist());
         transactionMsgService.confirmMsgToSend(msgId);
     }
-
-    @GetMapping
-    public int test() {
-        ExecutorService executorService = Executors.newFixedThreadPool(100);
-        for (int i = 0; i < 1000000; i++) {
-            executorService.execute(this::request);
-        }
-        return 0;
-    }
-
-
 }

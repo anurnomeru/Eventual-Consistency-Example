@@ -13,15 +13,15 @@ public interface Service<T> {
 
     int save(List<T> models);//批量持久化
 
-    int deleteById(Integer id);//通过主鍵刪除
+    int deleteById(Object id);//通过主鍵刪除
 
     int deleteByIds(String ids);//批量刪除 eg：ids -> “1,2,3,4”
 
     int update(T model);//更新
 
-    T findById(Integer id);//通过ID查找
+    T findById(Object id);//通过ID查找
 
-    T findExistById(Integer id);//通过ID查找，如果找不到 抛出异常。
+    T findExistById(Object id);//通过ID查找，如果找不到 抛出异常。
 
     T findBy(String fieldName, Object value) throws TooManyResultsException; //通过Model中某个成员变量名称（非数据表中column的名称）查找,value需符合unique约束
 

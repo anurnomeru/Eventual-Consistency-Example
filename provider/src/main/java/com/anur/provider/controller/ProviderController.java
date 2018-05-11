@@ -56,4 +56,9 @@ public class ProviderController {
         // 确认消息可以被发送
         transactionMsgService.confirmMsgToSend(msgId);
     }
+
+    @GetMapping("check")
+    public boolean check(String id) {
+        return providerOrderService.findById(id) != null;
+    }
 }

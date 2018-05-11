@@ -18,6 +18,7 @@ import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -121,5 +122,11 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         Condition condition = new Condition(TransactionMsg.class);
         condition.or().andEqualTo("version", version).andEqualTo("id", id);
         return condition;
+    }
+
+    public List<TransactionMsg> getUnConfirmList() {
+        Condition condition = new Condition(TransactionMsg.class);
+        condition.or().andEqualTo("status", MsgStatusEnum.PREPARE).andEqualTo("dead", DeadStatusEnum.ALIVE);
+        return transactionMsgMapper.selectByCondition(condition);
     }
 }

@@ -35,7 +35,7 @@ public abstract class AbstractService<T> implements Service<T> {
     }
 
     @Override
-    public int deleteById(Integer id) {
+    public int deleteById(Object id) {
         return mapper.deleteByPrimaryKey(id);
     }
 
@@ -50,12 +50,12 @@ public abstract class AbstractService<T> implements Service<T> {
     }
 
     @Override
-    public T findById(Integer id) {
+    public T findById(Object id) {
         return mapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public T findExistById(Integer id) {
+    public T findExistById(Object id) {
         T t = mapper.selectByPrimaryKey(id);
         if (t == null) {
             throw new RuntimeException("NOT_EXIST");

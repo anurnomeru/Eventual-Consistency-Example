@@ -12,8 +12,8 @@
 
     <parent>
         <groupId>com.anur</groupId>
-        <artifactId>anurmq</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>Eventual-Consistency-Example</artifactId>
+        <version>LATEST</version>
     </parent>
 
     <dependencies>

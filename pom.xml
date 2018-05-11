@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.anur</groupId>
-    <artifactId>anurmq</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>Eventual-Consistency-Example</artifactId>
+    <version>LATEST</version>
     <packaging>pom</packaging>
 
-    <name>anurmq</name>
-    <description>Anur MQ</description>
+    <name>Eventual-Consistency-Example</name>
+    <description>可靠消息最终一致性在spring cloud下的实现Demo</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -27,6 +27,8 @@
         <spring-tk.mybatis.version>2.0.2</spring-tk.mybatis.version>
         <spring-pagehelper.version>1.2.5</spring-pagehelper.version>
         <log4j.version>1.2.17</log4j.version>
+        <hikari.version>3.1.0</hikari.version>
+        <gson.version>2.8.4</gson.version>
     </properties>
 
     <modules>
@@ -36,6 +38,7 @@
         <module>message-server</module>
         <module>message-api</module>
         <module>provider</module>
+        <module>consumer</module>
     </modules>
 
     <dependencies>

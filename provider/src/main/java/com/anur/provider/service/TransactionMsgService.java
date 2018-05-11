@@ -10,4 +10,5 @@ import org.springframework.stereotype.Service;
 @Service
 @FeignClient(value = "message-server")
 public interface TransactionMsgService extends TransactionMsgApi {
+
 }

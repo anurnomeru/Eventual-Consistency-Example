@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/5/8
@@ -16,10 +16,10 @@ public interface TransactionMsgApi {
      * 预发送消息，先将消息保存到消息中心
      */
     @RequestMapping(value = "prepare", method = RequestMethod.GET)
-    String prepareMsg(@RequestParam("msg") Object msg,
+    String prepareMsg(@RequestParam("msg") String msg,
                       @RequestParam("routingKey") String routingKey,
                       @RequestParam("exchange") String exchange,
-                      @RequestParam("paramMap") HashMap paramMap,
+                      @RequestParam("paramMap") String paramMap,
                       @RequestParam("artist") String artist);
 
     /**

@@ -1,8 +1,10 @@
 package com.anur.provider.controller;
 
+import com.anur.common.Constant;
 import com.anur.config.ArtistConfiguration;
 import com.anur.model.TestMsg;
 import com.anur.provider.service.TransactionMsgService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,18 +27,21 @@ public class ProviderController {
     private ArtistConfiguration artistConfiguration;
 
     @GetMapping
-    private void request() {
+    public void test() {
         TestMsg testMsg = new TestMsg();
         testMsg.setContent("这是一条测试消息");
         testMsg.setDate(new Date());
+        String testMsgStr = new Gson().toJson(testMsg);
 
-        String routingKey = "testKey";
-        String exchangeName = "testExchange";
-        HashMap hashMap = new HashMap();
-        hashMap.put("orderId", "10086");
-        hashMap.put("state", "CLEAR");
+        String routingKey = "test.key.testing";
+        Map map = new HashMap();
+        map.put("orderId", "10086");
+        map.put("state", "CLEAR");
+        String mapStr = new Gson().toJson(map);
 
-        String msgId = transactionMsgService.prepareMsg(testMsg, routingKey, exchangeName, hashMap, artistConfiguration.getArtist());
+        System.out.println("MSG: " + testMsgStr);
+
+        String msgId = transactionMsgService.prepareMsg(testMsgStr, routingKey, Constant.TEST_EXCHANGE, mapStr, artistConfiguration.getArtist());
         transactionMsgService.confirmMsgToSend(msgId);
     }
 }

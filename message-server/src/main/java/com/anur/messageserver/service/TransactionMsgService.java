@@ -10,7 +10,6 @@ import com.anur.messageserver.model.TransactionMsg;
 import com.anur.messageserver.core.AbstractService;
 import com.anur.messageserver.rabbitmq.MsgSender;
 import com.google.gson.Gson;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -21,6 +20,7 @@ import tk.mybatis.mapper.entity.Condition;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -40,14 +40,9 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     private MsgSender msgSender;
 
     @Override
-    public String prepareMsg(Object msg, String routingKey, String exchange, HashMap paramMap, String artist) {
+    public String prepareMsg(String msg, String routingKey, String exchange, String paramMap, String artist) {
         TransactionMsg.TransactionMsgBuilder builder = TransactionMsg.builder();
         String id = UUID.randomUUID() + String.valueOf(Math.random());
-
-        Gson gson = new Gson();
-        String msgStr = gson.toJson(msg);
-
-        String paramMapStr = gson.toJson(paramMap);
 
         builder.id(id)
                 .creater(artist)
@@ -57,8 +52,8 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
                 .version(0)
                 .msgRoutingKey(routingKey)
                 .msgExchange(exchange)
-                .msgContent(msgStr)
-                .paramMap(paramMapStr);
+                .msgContent(msg)
+                .paramMap(paramMap);
 
         transactionMsgMapper.insert(builder.build());
 
@@ -99,6 +94,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
 
         transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id));
 
+        System.out.println("SENDING MSG: " + transactionMsg.getMsgContent());
         // 发消息到队列
         msgSender.send(transactionMsg.getMsgExchange(), transactionMsg.getMsgRoutingKey(), transactionMsg.getMsgContent(), new CorrelationData(id));
     }
@@ -111,6 +107,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
 
         int originalVersion = transactionMsg.getVersion();
         transactionMsg.setStatus(MsgStatusEnum.ACK.name());
+        transactionMsg.setDead(DeadStatusEnum.DEAD.name());
         transactionMsg.setVersion(originalVersion + 1);
 
         return transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id));

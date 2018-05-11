@@ -1,6 +1,6 @@
 package com.anur.provider.service;
 
-import com.anur.core.Service;
+import com.anur.provider.core.Service;
 import com.anur.provider.model.ProviderOrder;
 
 /**

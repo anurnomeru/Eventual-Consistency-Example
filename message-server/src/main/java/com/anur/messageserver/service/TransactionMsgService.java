@@ -7,7 +7,7 @@ import com.anur.messageapi.api.TransactionMsgApi;
 import com.anur.messageserver.dao.TransactionMsgMapper;
 import com.anur.exception.ServiceException;
 import com.anur.messageserver.model.TransactionMsg;
-import com.anur.core.AbstractService;
+import com.anur.messageserver.core.AbstractService;
 import com.anur.messageserver.rabbitmq.MsgSender;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +68,10 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
             throw new ServiceException("id is invalid.");
         }
 
+        transactionMsg.setDead(DeadStatusEnum.ALIVE.name());
         transactionMsg.setEditor(artistConfiguration.getArtist());
         transactionMsg.setEditTime(new Date());
+        transactionMsg.setMsgSendTime(new Date());
 
         int originalVersion = transactionMsg.getVersion();
         transactionMsg.setStatus(MsgStatusEnum.CONFIRM.name());
@@ -124,9 +126,29 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         return condition;
     }
 
+    /**
+     * 获取所有未确认的消息
+     */
     public List<TransactionMsg> getUnConfirmList() {
         Condition condition = new Condition(TransactionMsg.class);
         condition.or().andEqualTo("status", MsgStatusEnum.PREPARE).andEqualTo("dead", DeadStatusEnum.ALIVE);
         return transactionMsgMapper.selectByCondition(condition);
+    }
+
+    /**
+     * 更新version，version到10直接DEAD
+     */
+    public void updateVersion(String id) {
+        TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
+        int originalVersion = transactionMsg.getVersion();
+        transactionMsg.setEditor(artistConfiguration.getArtist());
+        transactionMsg.setEditTime(new Date());
+
+        if (originalVersion == 9) {
+            transactionMsg.setDead(DeadStatusEnum.DEAD.name());
+        }
+
+        transactionMsg.setVersion(originalVersion + 1);
+        transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id));
     }
 }

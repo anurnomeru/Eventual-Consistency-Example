@@ -1,4 +1,4 @@
-package com.anur.core;
+package com.anur.messageserver.core;
 
 import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.common.ConditionMapper;

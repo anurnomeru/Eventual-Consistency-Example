@@ -1,4 +1,4 @@
-package com.anur.core;
+package com.anur.provider.core;
 
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import tk.mybatis.mapper.entity.Condition;

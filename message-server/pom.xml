@@ -67,6 +67,20 @@
             <version>${spring-pagehelper.version}</version>
         </dependency>
 
+        <!-- mybatis -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${spring-mybatis.version}</version>
+        </dependency>
+
+        <!-- tk.mybatis -->
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper-spring-boot-starter</artifactId>
+            <version>${spring-tk.mybatis.version}</version>
+        </dependency>
+
         <!-- 连接池 -->
         <dependency>
             <groupId>com.zaxxer</groupId>

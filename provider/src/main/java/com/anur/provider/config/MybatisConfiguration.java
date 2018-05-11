@@ -1,6 +1,6 @@
-package com.anur.messageserver.config;
+package com.anur.provider.config;
 
-import com.anur.messageserver.common.Constant;
+import com.anur.provider.common.Constant;
 import com.github.pagehelper.PageInterceptor;
 import com.github.pagehelper.autoconfigure.PageHelperProperties;
 import org.apache.ibatis.plugin.Interceptor;

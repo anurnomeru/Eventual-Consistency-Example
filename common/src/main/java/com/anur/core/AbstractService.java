@@ -1,4 +1,4 @@
-package com.anur.messageserver.core;
+package com.anur.core;
 
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.beans.factory.annotation.Autowired;

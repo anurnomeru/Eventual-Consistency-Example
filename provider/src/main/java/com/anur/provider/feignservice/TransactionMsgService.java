@@ -1,4 +1,4 @@
-package com.anur.provider.service;
+package com.anur.provider.feignservice;
 
 import com.anur.messageapi.api.TransactionMsgApi;
 import org.springframework.cloud.openfeign.FeignClient;

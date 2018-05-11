@@ -18,8 +18,10 @@ public class CodeGenerator {
     private static String JDBC_PASSWORD = "root";
     private static String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
+    private static String MODULE = "provider";//TODO: 生成表要改这个
+
     //PACKAGE
-    private static String PACKAGE_BASE = "com.anur.messageserver";// 项目基础包名称
+    private static String PACKAGE_BASE = "com.anur." + MODULE;// 项目基础包名称
     private static String PACKAGE_MODEL = PACKAGE_BASE + ".model";// Model所在包
     private static String PACKAGE_MAPPER = PACKAGE_BASE + ".dao";// Mapper所在包
     private static String PACKAGE_SERVICE = PACKAGE_BASE + ".service";// Service所在包
@@ -28,7 +30,7 @@ public class CodeGenerator {
 
     //PATH
     private static String PATH_TEMPLATE_FILE = System.getProperty("user.dir") + "/codegen/src/main/resources/templates";//模板位置
-    private static String PATH_PROJECT = System.getProperty("user.dir") + "/message-server";//项目在硬盘上的基础路径
+    private static String PATH_PROJECT = System.getProperty("user.dir") + "/" + MODULE;//项目在硬盘上的基础路径
     private static String PATH_SERVICE = PATH_PROJECT + "/src/main/java"; //Service文件路径
     private static String PATH_MAPPER = PATH_PROJECT + "/src/main/java"; //Mapper文件路径
     private static String PATH_MODEL = PATH_PROJECT + "/src/main/java"; //Model文件路径
@@ -43,7 +45,7 @@ public class CodeGenerator {
     public static void main(String[] args) {
         System.out.println(System.getProperty("user.dir"));
         PATH_SERVICE = PATH_PROJECT + "/src/main/java";
-        genCode("transaction_msg");
+        genCode("provider_order");
     }
 
     public static void genCode(String... tableNames) {

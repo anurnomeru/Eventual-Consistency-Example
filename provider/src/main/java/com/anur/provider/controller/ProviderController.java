@@ -3,7 +3,9 @@ package com.anur.provider.controller;
 import com.anur.common.Constant;
 import com.anur.config.ArtistConfiguration;
 import com.anur.model.TestMsg;
-import com.anur.provider.service.TransactionMsgService;
+import com.anur.provider.feignservice.TransactionMsgService;
+import com.anur.provider.model.ProviderOrder;
+import com.anur.provider.service.ProviderOrderService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/5/8
@@ -26,6 +29,9 @@ public class ProviderController {
     @Autowired
     private ArtistConfiguration artistConfiguration;
 
+    @Autowired
+    private ProviderOrderService providerOrderService;
+
     @GetMapping
     public void test() {
         TestMsg testMsg = new TestMsg();
@@ -35,12 +41,19 @@ public class ProviderController {
 
         String routingKey = "test.key.testing";
         Map<String, String> map = new HashMap<>();
-        map.put("orderId", "10086");
-        map.put("state", "CLEAR");
+
+        String orderId = UUID.randomUUID().toString() + System.currentTimeMillis();
+        map.put("id", orderId);
         String mapStr = new Gson().toJson(map);
 
-        System.out.println("MSG: " + testMsgStr);
         String msgId = transactionMsgService.prepareMsg(testMsgStr, routingKey, Constant.TEST_EXCHANGE, mapStr, artistConfiguration.getArtist());
+
+        // 执行业务
+        ProviderOrder providerOrder = new ProviderOrder();
+        providerOrder.setId(orderId);
+        providerOrderService.save(providerOrder);
+
+        // 确认消息可以被发送
         transactionMsgService.confirmMsgToSend(msgId);
     }
 }

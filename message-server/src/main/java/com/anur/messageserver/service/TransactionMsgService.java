@@ -7,9 +7,8 @@ import com.anur.messageapi.api.TransactionMsgApi;
 import com.anur.messageserver.dao.TransactionMsgMapper;
 import com.anur.exception.ServiceException;
 import com.anur.messageserver.model.TransactionMsg;
-import com.anur.messageserver.core.AbstractService;
+import com.anur.core.AbstractService;
 import com.anur.messageserver.rabbitmq.MsgSender;
-import com.google.gson.Gson;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -19,8 +18,6 @@ import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 

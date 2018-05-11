@@ -53,20 +53,6 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
-        <!-- mybatis -->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${spring-mybatis.version}</version>
-        </dependency>
-
-        <!-- tk.mybatis -->
-        <dependency>
-            <groupId>tk.mybatis</groupId>
-            <artifactId>mapper-spring-boot-starter</artifactId>
-            <version>${spring-tk.mybatis.version}</version>
-        </dependency>
-
         <!-- log4j -->
         <dependency>
             <groupId>log4j</groupId>

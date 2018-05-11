@@ -43,6 +43,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     public String prepareMsg(String msg, String routingKey, String exchange, String paramMap, String artist) {
         TransactionMsg.TransactionMsgBuilder builder = TransactionMsg.builder();
         String id = UUID.randomUUID() + String.valueOf(Math.random());
+        System.out.println("PREPARE MSG: " + id);
 
         builder.id(id)
                 .creater(artist)
@@ -62,6 +63,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
 
     @Override
     public int confirmMsgToSend(String id) {
+        System.out.println("CONFIRM MSG: " + id);
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
 
         if (transactionMsg == null) {
@@ -82,25 +84,27 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     @Async
     @Override
     public void sendMsg(String id) {
+        System.out.println("SENDING MSG: " + id);
         // 更新表单字段
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
-        transactionMsg.setEditor(artistConfiguration.getArtist());
-        transactionMsg.setEditTime(new Date());
+//        transactionMsg.setEditor(artistConfiguration.getArtist());
+//        transactionMsg.setEditTime(new Date());
+//
+//        int originalVersion = transactionMsg.getVersion();
+//        transactionMsg.setStatus(MsgStatusEnum.SENDING.name());
+//        transactionMsg.setMsgSendTime(new Date());
+//        transactionMsg.setVersion(originalVersion + 1);
+//
+//        transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id));
 
-        int originalVersion = transactionMsg.getVersion();
-        transactionMsg.setStatus(MsgStatusEnum.SENDING.name());
-        transactionMsg.setMsgSendTime(new Date());
-        transactionMsg.setVersion(originalVersion + 1);
-
-        transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id));
-
-        System.out.println("SENDING MSG: " + transactionMsg.getMsgContent());
         // 发消息到队列
         msgSender.send(transactionMsg.getMsgExchange(), transactionMsg.getMsgRoutingKey(), transactionMsg.getMsgContent(), new CorrelationData(id));
     }
 
     @Override
     public int acknowledgement(String id, String artist) {
+        System.out.println("ACK MSG: " + id);
+
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
         transactionMsg.setEditor(artist);
         transactionMsg.setEditTime(new Date());

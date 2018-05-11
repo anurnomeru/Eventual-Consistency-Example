@@ -34,13 +34,12 @@ public class ProviderController {
         String testMsgStr = new Gson().toJson(testMsg);
 
         String routingKey = "test.key.testing";
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         map.put("orderId", "10086");
         map.put("state", "CLEAR");
         String mapStr = new Gson().toJson(map);
 
         System.out.println("MSG: " + testMsgStr);
-
         String msgId = transactionMsgService.prepareMsg(testMsgStr, routingKey, Constant.TEST_EXCHANGE, mapStr, artistConfiguration.getArtist());
         transactionMsgService.confirmMsgToSend(msgId);
     }

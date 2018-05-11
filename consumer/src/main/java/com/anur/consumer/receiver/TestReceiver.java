@@ -8,9 +8,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import com.rabbitmq.client.Channel;
 
-import java.io.IOException;
-
-
 /**
  * Created by Anur IjuoKaruKas on 2018/5/10
  */
@@ -18,14 +15,14 @@ import java.io.IOException;
 public class TestReceiver {
 
     @RabbitListener(queues = Constant.QUEUE_NAME)
-    public void receivMsg(String msg, Message message, Channel channel) throws IOException {
-        System.out.println("MSG: " + msg);
-        TestMsg testMsg = new Gson().fromJson(msg, TestMsg.class);
-        System.out.println("Receiver : " + testMsg.toString());
+    public void receiveMsg(String msg, Message message, Channel channel) throws Exception {
+        try {
+            TestMsg testMsg = new Gson().fromJson(msg, TestMsg.class);
+            System.out.println("Receiver : " + testMsg.toString());
 
-        long tag = message.getMessageProperties().getDeliveryTag();
-        System.out.println(tag);
-        channel.basicAck(tag, true);
-
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (Exception e) {
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+        }
     }
 }

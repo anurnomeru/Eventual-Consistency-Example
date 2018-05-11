@@ -34,14 +34,16 @@ public class RabbitConfiguration {
             String correlationId = message.getMessageProperties().getCorrelationId();
             System.out.println(String.format("消息：%s 发送失败, 应答码: %s 原因：%s 交换机: %s  路由键: %s", correlationId, replyCode, replyText, exchange, routingKey));
         });
+
         // 消息确认
         // 需要配置 publisher-returns: true
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
-                transactionMsgService.acknowledgement(correlationData.getId(), artistConfiguration.getArtist());
+                System.out.println(transactionMsgService.acknowledgement(correlationData.getId(), artistConfiguration.getArtist()));
+
                 System.out.println(String.format("消息发送到exchange成功, id: %s", correlationData.getId()));
             } else {
-                System.out.println(String.format("消息发送到exchange失败, id: %s, 原因: %s", cause));
+                System.out.println(String.format("消息发送到exchange失败, id: %s, 原因: %s", correlationData.getId(), cause));
             }
         });
         return rabbitTemplate;

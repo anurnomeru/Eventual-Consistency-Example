@@ -28,7 +28,7 @@ public class MsgConfirm {
     @Autowired
     private MsgSender msgSender;
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/1 * * * * *")
     public void confirmMsg() {
 
         List<TransactionMsg> unConfirmList = transactionMsgService.getUnConfirmList();
@@ -41,8 +41,10 @@ public class MsgConfirm {
             boolean result = false;
             try {
                 String url = UrlBuilder.buildUrl(transactionMsg);
+                System.out.println("请求url为：" + url);
                 result = restTemplate.getForObject(url, boolean.class);
             } catch (Exception e) {
+                e.printStackTrace();
                 continue;
             } finally {
                 if (result) {
@@ -56,7 +58,7 @@ public class MsgConfirm {
         }
     }
 
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "*/1 * * * * *")
     public void reSendMsg() {
         List<TransactionMsg> unAckList = transactionMsgService.getUnAckList();
 

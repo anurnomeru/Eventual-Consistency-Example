@@ -17,7 +17,10 @@ public class UrlBuilder {
 
         StringBuilder sb = new StringBuilder();
 
-        paramMap.entrySet().stream().map(o -> sb.append(o.getKey()).append("&").append(o.getValue()));
+        for (Map.Entry<String, String> stringStringEntry : paramMap.entrySet()) {
+            sb.append(stringStringEntry.getKey()).append("=").append(stringStringEntry.getValue()).append("&");
+        }
+
         sb.deleteCharAt(sb.length() - 1);
         return url + sb;
     }

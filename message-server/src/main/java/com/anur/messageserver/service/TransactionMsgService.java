@@ -144,7 +144,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         Condition condition = new Condition(TransactionMsg.class);
         Date date = new Date();
         date.setSeconds(date.getSeconds() - 5);
-        condition.or().andEqualTo("status", MsgStatusEnum.CONFIRM).andEqualTo("dead", DeadStatusEnum.ALIVE).andLessThan("msgSendTime", date);
+        condition.or().andEqualTo("status", MsgStatusEnum.CONFIRM).andEqualTo("dead", DeadStatusEnum.ALIVE);
         return transactionMsgMapper.selectByCondition(condition);
     }
 
@@ -157,7 +157,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         transactionMsg.setEditor(artistConfiguration.getArtist());
         transactionMsg.setEditTime(new Date());
 
-        if (originalVersion == 5) {
+        if (originalVersion == 10) {
             transactionMsg.setDead(DeadStatusEnum.DEAD.name());
         }
 

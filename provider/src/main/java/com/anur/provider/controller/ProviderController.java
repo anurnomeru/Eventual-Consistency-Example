@@ -4,14 +4,22 @@ import com.anur.common.Constant;
 import com.anur.config.ArtistConfiguration;
 import com.anur.model.TestMsg;
 import com.anur.provider.feignservice.TransactionMsgService;
+import com.anur.provider.model.PrepareMsg;
 import com.anur.provider.model.ProviderOrder;
+import com.anur.provider.service.PrepareMsgService;
 import com.anur.provider.service.ProviderOrderService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Condition;
 
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by Anur IjuoKaruKas on 2018/5/8
@@ -24,10 +32,10 @@ public class ProviderController {
     private TransactionMsgService transactionMsgService;
 
     @Autowired
-    private ArtistConfiguration artistConfiguration;
+    private ProviderOrderService providerOrderService;
 
     @Autowired
-    private ProviderOrderService providerOrderService;
+    private PrepareMsgService prepareMsgService;
 
     @GetMapping
     public void test() throws Exception {
@@ -43,27 +51,18 @@ public class ProviderController {
         map.put("id", orderId);
         String mapStr = new Gson().toJson(map);
 
-        String msgId = transactionMsgService.prepareMsg(testMsgStr, routingKey, Constant.TEST_EXCHANGE, mapStr, artistConfiguration.getArtist());
+        // ===============================
 
+        PrepareMsg prepareMsg = prepareMsgService.genMsg(orderId, testMsgStr, routingKey, Constant.TEST_EXCHANGE, mapStr);
+        prepareMsgService.prepareMsg(prepareMsg);
 
-        Random random = new Random();
-
-        // 模拟业务执行很久，那边确认不到，然后进行重试。
-        if (random.nextBoolean()) {
-            Thread.sleep(random.nextInt(20) * 1000);
-
-            if (random.nextBoolean()){
-                throw new Exception("模拟业务执行失败！");
-            }
-
-            // 执行业务
-            ProviderOrder providerOrder = new ProviderOrder();
-            providerOrder.setId(orderId);
-            providerOrderService.save(providerOrder);
-        }
+        // 执行业务
+        ProviderOrder providerOrder = new ProviderOrder();
+        providerOrder.setId(orderId);
+        providerOrderService.save(providerOrder);
 
         // 确认消息可以被发送
-        transactionMsgService.confirmMsgToSend(msgId);
+        prepareMsgService.confirmMsgToSend(orderId);
     }
 
     @GetMapping("check")

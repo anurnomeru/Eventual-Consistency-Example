@@ -45,7 +45,7 @@ public class CodeGenerator {
     public static void main(String[] args) {
         System.out.println(System.getProperty("user.dir"));
         PATH_SERVICE = PATH_PROJECT + "/src/main/java";
-        genCode("provider_order");
+        genCode("prepare_msg");
     }
 
     public static void genCode(String... tableNames) {

@@ -1,8 +1,10 @@
 package com.anur.messageserver.cron;
 
 import com.anur.messageserver.model.TransactionMsg;
+import com.anur.messageserver.rabbitmq.MsgSender;
 import com.anur.messageserver.service.TransactionMsgService;
 import com.anur.messageserver.util.UrlBuilder;
+import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,11 +25,18 @@ public class MsgConfirm {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Scheduled(cron = "*/1 * * * * *")
+    @Autowired
+    private MsgSender msgSender;
+
+    @Scheduled(cron = "*/2 * * * * *")
     public void confirmMsg() {
-        System.out.println("定时捞取未确认任务中!");
 
         List<TransactionMsg> unConfirmList = transactionMsgService.getUnConfirmList();
+
+        if (unConfirmList.size() > 0) {
+            System.out.println("定时捞取未确认任务中!");
+        }
+
         for (TransactionMsg transactionMsg : unConfirmList) {
             boolean result = false;
             try {
@@ -44,6 +53,19 @@ public class MsgConfirm {
                     transactionMsgService.updateVersion(transactionMsg.getId());
                 }
             }
+        }
+    }
+
+    @Scheduled(cron = "*/5 * * * * *")
+    public void reSendMsg() {
+        List<TransactionMsg> unAckList = transactionMsgService.getUnAckList();
+
+        if (unAckList.size() > 0) {
+            System.out.println("定时捞取未ACK任务中!");
+        }
+
+        for (TransactionMsg transactionMsg : unAckList) {
+            msgSender.send(transactionMsg.getMsgExchange(), transactionMsg.getMsgRoutingKey(), transactionMsg.getMsgContent(), new CorrelationData(transactionMsg.getId()));
         }
     }
 }

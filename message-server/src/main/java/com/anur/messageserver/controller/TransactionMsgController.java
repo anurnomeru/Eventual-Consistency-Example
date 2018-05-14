@@ -17,8 +17,8 @@ public class TransactionMsgController implements TransactionMsgApi {
     private TransactionMsgService transactionMsgService;
 
     @Override
-    public String prepareMsg(@NotNull String msg, @NotNull String routingKey, @NotNull String exchange, @NotNull String paramMap, @NotNull String artist) {
-        return transactionMsgService.prepareMsg(msg, routingKey, exchange, paramMap, artist);
+    public int prepareMsg(@NotNull String id, @NotNull String msg, @NotNull String routingKey, @NotNull String exchange, @NotNull String paramMap, @NotNull String artist) {
+        return transactionMsgService.prepareMsg(id, msg, routingKey, exchange, paramMap, artist);
     }
 
     @Override

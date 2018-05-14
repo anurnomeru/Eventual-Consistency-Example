@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -38,9 +39,12 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     private MsgSender msgSender;
 
     @Override
-    public String prepareMsg(String msg, String routingKey, String exchange, String paramMap, String artist) {
+    public int prepareMsg(String id, String msg, String routingKey, String exchange, String paramMap, String artist) {
+        if (transactionMsgMapper.selectByPrimaryKey(id) != null) {
+            return 0;
+        }
+
         TransactionMsg.TransactionMsgBuilder builder = TransactionMsg.builder();
-        String id = UUID.randomUUID() + String.valueOf(Math.random());
         System.out.println("PREPARE MSG: " + id);
 
         builder.id(id)
@@ -54,9 +58,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
                 .msgContent(msg)
                 .paramMap(paramMap);
 
-        transactionMsgMapper.insert(builder.build());
-
-        return id;
+        return transactionMsgMapper.insert(builder.build());
     }
 
     @Override
@@ -65,13 +67,12 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
 
         if (transactionMsg == null) {
-            throw new ServiceException("id is invalid.");
+            return 0;
         }
 
         transactionMsg.setDead(DeadStatusEnum.ALIVE.name());
         transactionMsg.setEditor(artistConfiguration.getArtist());
         transactionMsg.setEditTime(new Date());
-        transactionMsg.setMsgSendTime(new Date());
 
         int originalVersion = transactionMsg.getVersion();
         transactionMsg.setStatus(MsgStatusEnum.CONFIRM.name());
@@ -112,6 +113,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         int originalVersion = transactionMsg.getVersion();
         transactionMsg.setStatus(MsgStatusEnum.ACK.name());
         transactionMsg.setDead(DeadStatusEnum.DEAD.name());
+        transactionMsg.setMsgSendTime(new Date());
         transactionMsg.setVersion(originalVersion + 1);
 
         return transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id));
@@ -136,7 +138,18 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     }
 
     /**
-     * 更新version，version到10直接DEAD
+     * 获取所有未ACK的消息
+     */
+    public List<TransactionMsg> getUnAckList() {
+        Condition condition = new Condition(TransactionMsg.class);
+        Date date = new Date();
+        date.setSeconds(date.getSeconds() - 5);
+        condition.or().andEqualTo("status", MsgStatusEnum.CONFIRM).andEqualTo("dead", DeadStatusEnum.ALIVE).andLessThan("msgSendTime", date);
+        return transactionMsgMapper.selectByCondition(condition);
+    }
+
+    /**
+     * 更新version，version到5直接DEAD
      */
     public void updateVersion(String id) {
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
@@ -144,7 +157,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         transactionMsg.setEditor(artistConfiguration.getArtist());
         transactionMsg.setEditTime(new Date());
 
-        if (originalVersion == 9) {
+        if (originalVersion == 5) {
             transactionMsg.setDead(DeadStatusEnum.DEAD.name());
         }
 

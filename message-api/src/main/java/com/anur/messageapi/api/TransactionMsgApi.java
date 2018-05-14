@@ -16,11 +16,13 @@ public interface TransactionMsgApi {
      * 预发送消息，先将消息保存到消息中心
      */
     @RequestMapping(value = "prepare", method = RequestMethod.GET)
-    String prepareMsg(@RequestParam("msg") String msg,
-                      @RequestParam("routingKey") String routingKey,
-                      @RequestParam("exchange") String exchange,
-                      @RequestParam("paramMap") String paramMap,
-                      @RequestParam("artist") String artist);
+    int prepareMsg(
+            @RequestParam("id") String id,
+            @RequestParam("msg") String msg,
+            @RequestParam("routingKey") String routingKey,
+            @RequestParam("exchange") String exchange,
+            @RequestParam("paramMap") String paramMap,
+            @RequestParam("artist") String artist);
 
     /**
      * 生产者确认消息可投递

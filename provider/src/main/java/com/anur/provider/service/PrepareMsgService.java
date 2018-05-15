@@ -4,6 +4,7 @@ import com.anur.provider.model.PrepareMsg;
 import com.anur.provider.core.Service;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
 public interface PrepareMsgService extends Service<PrepareMsg> {
     PrepareMsg genMsg(String id, String msg, String routingKey, String exchange, String paramMap);
 
-    void prepareMsg(PrepareMsg prepareMsg);
+    Future<Integer> prepareMsg(PrepareMsg prepareMsg);
 
     List<PrepareMsg> getUnConfirmList();
 

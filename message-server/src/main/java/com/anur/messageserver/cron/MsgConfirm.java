@@ -1,9 +1,11 @@
 package com.anur.messageserver.cron;
 
+import com.anur.field.MsgStatusEnum;
 import com.anur.messageserver.model.TransactionMsg;
 import com.anur.messageserver.rabbitmq.MsgSender;
 import com.anur.messageserver.service.TransactionMsgService;
 import com.anur.messageserver.util.UrlBuilder;
+import com.github.pagehelper.PageHelper;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,6 +33,7 @@ public class MsgConfirm {
     @Scheduled(cron = "*/1 * * * * *")
     public void confirmMsg() {
 
+        PageHelper.startPage(1,10).setOrderBy("create_time DESC");
         List<TransactionMsg> unConfirmList = transactionMsgService.getUnConfirmList();
 
         if (unConfirmList.size() > 0) {
@@ -45,14 +48,13 @@ public class MsgConfirm {
                 result = restTemplate.getForObject(url, boolean.class);
             } catch (Exception e) {
                 e.printStackTrace();
-                continue;
             } finally {
                 if (result) {
                     System.out.println("id: " + transactionMsg.getId() + "确认成功，准备发送！");
                     transactionMsgService.confirmMsgToSend(transactionMsg.getId());
                 } else {
                     System.out.println("id: " + transactionMsg.getId() + "确认失败，如果未超过重试次数，将在下次确认中重试！");
-                    transactionMsgService.updateVersion(transactionMsg.getId());
+                    transactionMsgService.updateVersion(transactionMsg.getId(), MsgStatusEnum.PREPARE);
                 }
             }
         }

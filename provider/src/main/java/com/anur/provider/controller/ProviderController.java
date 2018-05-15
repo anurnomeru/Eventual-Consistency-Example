@@ -1,7 +1,6 @@
 package com.anur.provider.controller;
 
 import com.anur.common.Constant;
-import com.anur.config.ArtistConfiguration;
 import com.anur.model.TestMsg;
 import com.anur.provider.feignservice.TransactionMsgService;
 import com.anur.provider.model.PrepareMsg;
@@ -10,15 +9,10 @@ import com.anur.provider.service.PrepareMsgService;
 import com.anur.provider.service.ProviderOrderService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tk.mybatis.mapper.entity.Condition;
 
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -54,7 +48,7 @@ public class ProviderController {
         // ===============================
 
         PrepareMsg prepareMsg = prepareMsgService.genMsg(orderId, testMsgStr, routingKey, Constant.TEST_EXCHANGE, mapStr);
-        prepareMsgService.prepareMsg(prepareMsg);
+        Future<Integer> future = prepareMsgService.prepareMsg(prepareMsg);
 
         // 执行业务
         ProviderOrder providerOrder = new ProviderOrder();
@@ -62,7 +56,9 @@ public class ProviderController {
         providerOrderService.save(providerOrder);
 
         // 确认消息可以被发送
-        prepareMsgService.confirmMsgToSend(orderId);
+        if (future.get() == 1) {
+            prepareMsgService.confirmMsgToSend(orderId);
+        }
     }
 
     @GetMapping("check")

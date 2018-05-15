@@ -24,8 +24,6 @@ public class TransactionMsgController implements TransactionMsgApi {
     @Override
     public int confirmMsgToSend(String id) {
         int result = transactionMsgService.confirmMsgToSend(id);
-
-        // 异步执行send操作
         transactionMsgService.sendMsg(id);
         return result;
     }

@@ -8,6 +8,7 @@ import com.anur.provider.service.PrepareMsgService;
 import com.anur.provider.core.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
@@ -15,6 +16,7 @@ import tk.mybatis.mapper.entity.Condition;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 
 /**
@@ -46,10 +48,12 @@ public class PrepareMsgServiceImpl extends AbstractService<PrepareMsg> implement
 
     @Async
     @Override
-    public void prepareMsg(PrepareMsg prepareMsg) {
-        if (transactionMsgService.prepareMsg(prepareMsg.getId(), prepareMsg.getMsg(), prepareMsg.getRoutingKey(), prepareMsg.getExchange(), prepareMsg.getParamMap(), artistConfiguration.getArtist()) == 1) {
+    public Future<Integer> prepareMsg(PrepareMsg prepareMsg) {
+        int result = transactionMsgService.prepareMsg(prepareMsg.getId(), prepareMsg.getMsg(), prepareMsg.getRoutingKey(), prepareMsg.getExchange(), prepareMsg.getParamMap(), artistConfiguration.getArtist());
+        if (result == 1) {
             prepareMsgMapper.deleteByPrimaryKey(prepareMsg.getId());
         }
+        return new AsyncResult<>(result);
     }
 
     @Override

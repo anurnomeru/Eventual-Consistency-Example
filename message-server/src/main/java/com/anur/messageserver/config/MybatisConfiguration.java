@@ -27,16 +27,16 @@ public class MybatisConfiguration {
         factory.setDataSource(dataSource);
         factory.setTypeAliasesPackage(Constant.MODEL_PACKAGE);
 
-        // 配置分页插件，详情请查阅官方文档
-        PageHelperProperties properties = new PageHelperProperties();
-        properties.setPageSizeZero("true");// 分页尺寸为0时查询所有纪录不再执行分页
-        properties.setReasonable("true");// 页码<=0 查询第一页，页码>=总页数查询最后一页
-        properties.setSupportMethodsArguments("true");// 支持通过 Mapper 接口参数来传递分页参数
-
-        PageInterceptor pageInterceptor = new PageInterceptor();
-        pageInterceptor.setProperties(properties.getProperties());
-        //  添加插件
-        factory.setPlugins(new Interceptor[]{pageInterceptor});
+//        // 配置分页插件，详情请查阅官方文档
+//        PageHelperProperties properties = new PageHelperProperties();
+//        properties.setPageSizeZero("true");// 分页尺寸为0时查询所有纪录不再执行分页
+//        properties.setReasonable("true");// 页码<=0 查询第一页，页码>=总页数查询最后一页
+//        properties.setSupportMethodsArguments("true");// 支持通过 Mapper 接口参数来传递分页参数
+//
+//        PageInterceptor pageInterceptor = new PageInterceptor();
+//        pageInterceptor.setProperties(properties.getProperties());
+//        //  添加插件
+//        factory.setPlugins(new Interceptor[]{pageInterceptor});
 
         // 添加XML目录
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

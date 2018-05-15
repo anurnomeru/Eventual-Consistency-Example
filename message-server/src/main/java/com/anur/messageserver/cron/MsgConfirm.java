@@ -30,10 +30,9 @@ public class MsgConfirm {
     @Autowired
     private MsgSender msgSender;
 
-    @Scheduled(cron = "*/1 * * * * *")
+    @Scheduled(cron = "*/2 * * * * *")
     public void confirmMsg() {
 
-        PageHelper.startPage(1,10).setOrderBy("create_time DESC");
         List<TransactionMsg> unConfirmList = transactionMsgService.getUnConfirmList();
 
         if (unConfirmList.size() > 0) {
@@ -44,13 +43,13 @@ public class MsgConfirm {
             boolean result = false;
             try {
                 String url = UrlBuilder.buildUrl(transactionMsg);
-                System.out.println("请求url为：" + url);
+//                System.out.println("请求url为：" + url);
                 result = restTemplate.getForObject(url, boolean.class);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 if (result) {
-                    System.out.println("id: " + transactionMsg.getId() + "确认成功，准备发送！");
+//                    System.out.println("id: " + transactionMsg.getId() + "确认成功，准备发送！");
                     transactionMsgService.confirmMsgToSend(transactionMsg.getId());
                 } else {
                     System.out.println("id: " + transactionMsg.getId() + "确认失败，如果未超过重试次数，将在下次确认中重试！");
@@ -60,7 +59,7 @@ public class MsgConfirm {
         }
     }
 
-    @Scheduled(cron = "*/1 * * * * *")
+    @Scheduled(cron = "*/2 * * * * *")
     public void reSendMsg() {
         List<TransactionMsg> unAckList = transactionMsgService.getUnAckList();
 
@@ -69,6 +68,7 @@ public class MsgConfirm {
         }
 
         for (TransactionMsg transactionMsg : unAckList) {
+            System.out.println("MSG REACK, id: " + transactionMsg.getId());
             msgSender.send(transactionMsg.getMsgExchange(), transactionMsg.getMsgRoutingKey(), transactionMsg.getMsgContent(), new CorrelationData(transactionMsg.getId()));
         }
     }

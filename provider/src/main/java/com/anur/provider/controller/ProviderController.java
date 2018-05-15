@@ -1,5 +1,6 @@
 package com.anur.provider.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.anur.common.Constant;
 import com.anur.model.TestMsg;
 import com.anur.provider.feignservice.TransactionMsgService;
@@ -7,7 +8,6 @@ import com.anur.provider.model.PrepareMsg;
 import com.anur.provider.model.ProviderOrder;
 import com.anur.provider.service.PrepareMsgService;
 import com.anur.provider.service.ProviderOrderService;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,14 +36,14 @@ public class ProviderController {
         TestMsg testMsg = new TestMsg();
         testMsg.setContent("这是一条测试消息");
         testMsg.setDate(new Date());
-        String testMsgStr = new Gson().toJson(testMsg);
+        String testMsgStr = JSON.toJSONString(testMsg);
 
         String routingKey = "test.key.testing";
         Map<String, String> map = new HashMap<>();
 
         String orderId = UUID.randomUUID().toString() + System.currentTimeMillis();
         map.put("id", orderId);
-        String mapStr = new Gson().toJson(map);
+        String mapStr = JSON.toJSONString(map);
 
         // ===============================
 

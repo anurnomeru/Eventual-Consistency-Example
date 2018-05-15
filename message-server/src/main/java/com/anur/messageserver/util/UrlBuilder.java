@@ -1,7 +1,8 @@
 package com.anur.messageserver.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.anur.messageserver.model.TransactionMsg;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,8 @@ public class UrlBuilder {
 
     public static String buildUrl(TransactionMsg transactionMsg) {
         String url = String.format("http://%s/check?", transactionMsg.getCreater());
-        Map<String, String> paramMap = new Gson().fromJson(transactionMsg.getParamMap(), HashMap.class);
+        Map<String, String> paramMap = JSON.parseObject(transactionMsg.getParamMap(), new TypeReference<HashMap<String, String>>() {
+        });
 
         StringBuilder sb = new StringBuilder();
 

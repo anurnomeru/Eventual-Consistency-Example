@@ -1,8 +1,10 @@
 package com.anur.messageserver.controller;
 
 import com.anur.messageapi.api.TransactionMsgApi;
+import com.anur.messageserver.cron.MsgConfirm;
 import com.anur.messageserver.service.TransactionMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
@@ -24,7 +26,9 @@ public class TransactionMsgController implements TransactionMsgApi {
     @Override
     public int confirmMsgToSend(String id) {
         int result = transactionMsgService.confirmMsgToSend(id);
-        transactionMsgService.sendMsg(id);
+        if (result == 1) {
+            transactionMsgService.sendMsg(id);
+        }
         return result;
     }
 
@@ -36,5 +40,10 @@ public class TransactionMsgController implements TransactionMsgApi {
     @Override
     public int acknowledgement(String id, String artist) {
         return transactionMsgService.acknowledgement(id, artist);
+    }
+
+    @GetMapping("test")
+    public void test() {
+        transactionMsgService.getUnConfirmList();
     }
 }

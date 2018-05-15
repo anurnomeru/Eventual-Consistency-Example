@@ -20,6 +20,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -47,7 +48,6 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         }
 
         TransactionMsg.TransactionMsgBuilder builder = TransactionMsg.builder();
-        System.out.println("PREPARE MSG: " + id);
 
         builder.id(id)
                 .creater(artist)
@@ -65,7 +65,6 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
 
     @Override
     public int confirmMsgToSend(String id) {
-        System.out.println("CONFIRM MSG: " + id);
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
 
         if (transactionMsg == null) {
@@ -86,18 +85,20 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
 
     @Override
     public void sendMsg(String id) {
-        System.out.println("SENDING MSG: " + id);
         // 更新表单字段
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
 
+        if (transactionMsg == null) {
+            return;
+        }
+
         // 发消息到队列
-        msgSender.send(transactionMsg.getMsgExchange(), transactionMsg.getMsgRoutingKey(), transactionMsg.getMsgContent(), new CorrelationData(id));
+        msgSender.send(transactionMsg.getMsgExchange(), transactionMsg.getMsgRoutingKey(), transactionMsg.getMsgContent(), new CorrelationData(transactionMsg.getId()));
     }
 
     @Override
     public int acknowledgement(String id, String artist) {
-        System.out.println("ACK MSG: " + id);
-
+//        System.out.println("MSG ACK, id: " + id);
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
         transactionMsg.setEditor(artist);
         transactionMsg.setEditTime(new Date());
@@ -107,7 +108,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
         transactionMsg.setDead(DeadStatusEnum.DEAD.name());
         transactionMsg.setVersion(originalVersion + 1);
 
-        return transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id, MsgStatusEnum.CONFIRM));
+        return transactionMsgMapper.updateByConditionSelective(transactionMsg, this._genVersionCondition(originalVersion, id, null));
     }
 
     /**
@@ -121,7 +122,6 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
 
         if (msgStatusEnum != null) {
             criteria.andEqualTo("status", msgStatusEnum.name());
-
         }
         return condition;
     }
@@ -131,11 +131,10 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
      */
     public List<TransactionMsg> getUnConfirmList() {
         Condition condition = new Condition(TransactionMsg.class);
-        Date date = new Date();
-        date.setSeconds(date.getSeconds() - 5);
-        condition.or().andEqualTo("status", MsgStatusEnum.PREPARE).andEqualTo("dead", DeadStatusEnum.ALIVE).andLessThan("createTime", date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, -5);
+        condition.or().andEqualTo("status", MsgStatusEnum.PREPARE).andEqualTo("dead", DeadStatusEnum.ALIVE).andLessThan("createTime", calendar.getTime());
 
-        PageHelper.startPage(1,10).setOrderBy("create_time DESC");
         return transactionMsgMapper.selectByCondition(condition);
     }
 
@@ -144,11 +143,10 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
      */
     public List<TransactionMsg> getUnAckList() {
         Condition condition = new Condition(TransactionMsg.class);
-        Date date = new Date();
-        date.setSeconds(date.getSeconds() - 5);
-        condition.or().andEqualTo("status", MsgStatusEnum.CONFIRM).andEqualTo("dead", DeadStatusEnum.ALIVE).andLessThan("msgSendTime", date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, -5);
+        condition.or().andEqualTo("status", MsgStatusEnum.CONFIRM).andEqualTo("dead", DeadStatusEnum.ALIVE).andLessThan("msgSendTime", calendar.getTime());
 
-        PageHelper.startPage(1,10).setOrderBy("msg_send_time DESC");
         return transactionMsgMapper.selectByCondition(condition);
     }
 

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -59,9 +60,9 @@ public class PrepareMsgServiceImpl extends AbstractService<PrepareMsg> implement
     @Override
     public List<PrepareMsg> getUnConfirmList() {
         Condition condition = new Condition(PrepareMsg.class);
-        Date date = new Date();
-        date.setSeconds(date.getSeconds() - 1);
-        condition.or().andLessThan("createTime", date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, -2);
+        condition.or().andLessThan("createTime", calendar.getTime());
         return prepareMsgMapper.selectByCondition(condition);
     }
 

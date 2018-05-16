@@ -68,8 +68,7 @@ public class PrepareMsgServiceImpl extends AbstractService<PrepareMsg> implement
 
     @Async
     @Override
-    public void confirmMsgToSend(String orderId) {
-        System.out.println(orderId);
-        transactionMsgService.confirmMsgToSend(orderId);
+    public void confirmMsgToSend(String orderId, String caller) {
+        transactionMsgService.confirmMsgToSend(orderId, caller);
     }
 }

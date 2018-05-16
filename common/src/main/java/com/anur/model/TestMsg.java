@@ -12,5 +12,4 @@ import java.util.Date;
 @ToString
 public class TestMsg {
     private String content;
-    private Date date;
 }

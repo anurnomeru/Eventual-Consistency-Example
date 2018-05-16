@@ -6,6 +6,8 @@ import com.anur.messageserver.rabbitmq.MsgSender;
 import com.anur.messageserver.service.TransactionMsgService;
 import com.anur.messageserver.util.UrlBuilder;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,6 +21,7 @@ import java.util.List;
  * Created by Anur IjuoKaruKas on 2018/5/11
  */
 @Component
+@Log
 public class MsgConfirm {
 
     @Autowired
@@ -27,49 +30,36 @@ public class MsgConfirm {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    private MsgSender msgSender;
-
     @Scheduled(cron = "*/2 * * * * *")
     public void confirmMsg() {
-
+        PageHelper.startPage(1, 10).setOrderBy("create_time DESC");
         List<TransactionMsg> unConfirmList = transactionMsgService.getUnConfirmList();
 
         if (unConfirmList.size() > 0) {
-            System.out.println("定时捞取未确认任务中!");
+            log.info(String.format("There is %s Msg not confirm immediately", unConfirmList.size()));
         }
 
         for (TransactionMsg transactionMsg : unConfirmList) {
-            boolean result = false;
+            boolean resultBoolean = false;
             try {
                 String url = UrlBuilder.buildUrl(transactionMsg);
-//                System.out.println("请求url为：" + url);
-                result = restTemplate.getForObject(url, boolean.class);
+                resultBoolean = restTemplate.getForObject(url, boolean.class);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (result) {
-//                    System.out.println("id: " + transactionMsg.getId() + "确认成功，准备发送！");
-                    transactionMsgService.confirmMsgToSend(transactionMsg.getId());
+                if (resultBoolean) {
+                    log.info(String.format("The Msg id: %s reConfirm from provider success.", transactionMsg.getId()));
+                    int result = transactionMsgService.confirmMsgToSend(transactionMsg.getId(), this.getClass().getSimpleName());
+                    if (result == 1) {
+                        transactionMsgService.sendMsg(transactionMsg.getId());
+                    } else {
+                        log.info("Msg confirm fail: " + transactionMsg.getId() + ", caller is " + this.getClass().getSimpleName());
+                    }
                 } else {
-                    System.out.println("id: " + transactionMsg.getId() + "确认失败，如果未超过重试次数，将在下次确认中重试！");
+                    log.info(String.format("The Msg id: %s reConfirm from provider fail!", transactionMsg.getId()));
                     transactionMsgService.updateVersion(transactionMsg.getId(), MsgStatusEnum.PREPARE);
                 }
             }
-        }
-    }
-
-    @Scheduled(cron = "*/2 * * * * *")
-    public void reSendMsg() {
-        List<TransactionMsg> unAckList = transactionMsgService.getUnAckList();
-
-        if (unAckList.size() > 0) {
-            System.out.println("定时捞取未ACK任务中!");
-        }
-
-        for (TransactionMsg transactionMsg : unAckList) {
-            System.out.println("MSG REACK, id: " + transactionMsg.getId());
-            msgSender.send(transactionMsg.getMsgExchange(), transactionMsg.getMsgRoutingKey(), transactionMsg.getMsgContent(), new CorrelationData(transactionMsg.getId()));
         }
     }
 }

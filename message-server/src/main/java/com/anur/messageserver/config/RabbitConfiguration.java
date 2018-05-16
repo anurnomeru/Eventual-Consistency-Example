@@ -24,27 +24,6 @@ public class RabbitConfiguration {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    private TransactionMsgService transactionMsgService;
-
-    @Autowired
-    private ArtistConfiguration artistConfiguration;
-
-    private AtomicInteger atomicInteger = new AtomicInteger();
-
-    private AtomicInteger atomicIntegerACK = new AtomicInteger();
-
-    @Scheduled(cron = "*/5 * * * * *")
-    public void printerACK() {
-        System.out.println("总ACK次数：" + atomicIntegerACK.get());
-    }
-
-    @Scheduled(cron = "*/5 * * * * *")
-    public void printer() {
-        System.out.println("每五秒ACK次数：" + atomicInteger.get());
-        atomicInteger = new AtomicInteger();
-    }
-
     @Bean
     public AmqpTemplate amqpTemplate() {
         // 开启returnCallBack
@@ -53,6 +32,7 @@ public class RabbitConfiguration {
         rabbitTemplate.setChannelTransacted(false);
         return rabbitTemplate;
     }
+
 //
 //        // 消息确认
 //        // 需要配置 publisher-returns: true

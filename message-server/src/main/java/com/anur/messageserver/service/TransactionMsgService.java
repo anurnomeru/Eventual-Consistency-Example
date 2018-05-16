@@ -10,6 +10,7 @@ import com.anur.messageserver.model.TransactionMsg;
 import com.anur.messageserver.core.AbstractService;
 import com.anur.messageserver.rabbitmq.MsgSender;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.java.Log;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -31,6 +32,7 @@ import java.util.UUID;
  */
 @Service
 @Transactional
+@Log
 public class TransactionMsgService extends AbstractService<TransactionMsg> implements TransactionMsgApi {
     @Resource
     private TransactionMsgMapper transactionMsgMapper;
@@ -44,6 +46,7 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     @Override
     public int prepareMsg(String id, String msg, String routingKey, String exchange, String paramMap, String artist) {
         if (transactionMsgMapper.selectByPrimaryKey(id) != null) {
+            log.info("Create msg fail: " + id + ", cause to exist primary key.");
             return 0;
         }
 
@@ -64,10 +67,10 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     }
 
     @Override
-    public int confirmMsgToSend(String id) {
+    public int confirmMsgToSend(String id, String caller) {
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
-
         if (transactionMsg == null) {
+            log.info("Confirm msg fail: " + id + ", cause to not exist data.");
             return 0;
         }
 
@@ -87,7 +90,6 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
     public void sendMsg(String id) {
         // 更新表单字段
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
-
         if (transactionMsg == null) {
             return;
         }
@@ -98,7 +100,6 @@ public class TransactionMsgService extends AbstractService<TransactionMsg> imple
 
     @Override
     public int acknowledgement(String id, String artist) {
-//        System.out.println("MSG ACK, id: " + id);
         TransactionMsg transactionMsg = transactionMsgMapper.selectByPrimaryKey(id);
         transactionMsg.setEditor(artist);
         transactionMsg.setEditTime(new Date());

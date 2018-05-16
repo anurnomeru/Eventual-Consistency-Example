@@ -33,10 +33,6 @@ public class ProviderController {
 
     @GetMapping
     public void test() throws Exception {
-        TestMsg testMsg = new TestMsg();
-        testMsg.setContent("这是一条测试消息");
-        testMsg.setDate(new Date());
-        String testMsgStr = JSON.toJSONString(testMsg);
 
         String routingKey = "test.key.testing";
         Map<String, String> map = new HashMap<>();
@@ -45,6 +41,9 @@ public class ProviderController {
         map.put("id", orderId);
         String mapStr = JSON.toJSONString(map);
 
+        TestMsg testMsg = new TestMsg();
+        testMsg.setContent("这是一条测试消息");
+        String testMsgStr = JSON.toJSONString(testMsg);
         // ===============================
 
         PrepareMsg prepareMsg = prepareMsgService.genMsg(orderId, testMsgStr, routingKey, Constant.TEST_EXCHANGE, mapStr);
@@ -57,7 +56,7 @@ public class ProviderController {
 
         // 确认消息可以被发送
         if (future.get() == 1) {
-            prepareMsgService.confirmMsgToSend(orderId);
+            prepareMsgService.confirmMsgToSend(orderId, this.getClass().getSimpleName());
         }
     }
 

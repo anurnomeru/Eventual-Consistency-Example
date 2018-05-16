@@ -17,5 +17,5 @@ public interface PrepareMsgService extends Service<PrepareMsg> {
 
     List<PrepareMsg> getUnConfirmList();
 
-    void confirmMsgToSend(String orderId);
+    void confirmMsgToSend(String orderId, String caller);
 }

@@ -30,7 +30,7 @@ public class RabbitConfiguration {
 
     @Bean
     Queue queue() {
-        return new Queue(Constant.QUEUE_NAME, false);
+        return new Queue(Constant.QUEUE_NAME, true);
     }
 
     @Bean
@@ -46,11 +46,6 @@ public class RabbitConfiguration {
     @Bean
     MessageListenerAdapter listenerAdapter(TestReceiver receiver) {
         return new MessageListenerAdapter(receiver, "receiveMsg");
-    }
-
-    @Bean
-    FastJsonMessageConverter fastJsonMessageConverter() {
-        return new FastJsonMessageConverter();
     }
 
     @Bean

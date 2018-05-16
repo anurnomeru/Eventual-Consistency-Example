@@ -28,7 +28,7 @@ public interface TransactionMsgApi {
      * 生产者确认消息可投递
      */
     @RequestMapping(value = "confirm", method = RequestMethod.GET)
-    int confirmMsgToSend(@RequestParam("id") String id);
+    int confirmMsgToSend(@RequestParam("id") String id, @RequestParam("caller") String caller);
 
     /**
      * 向队列投递消息
